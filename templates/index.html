@@ -47,7 +47,7 @@
                         <i class="bi bi-calendar"></i>
                       </div>
                       <div class="ps-3">
-                        <h6>{{ list(data['Date'])[-1] }} </h6>
+                        <h6>{{ date[-1] }} </h6>
                       </div>
                     </div>
                   </div>
@@ -67,7 +67,7 @@
                       <i class="bi bi-currency-dollar"></i>
                     </div>
                     <div class="ps-3">
-                      <h6>{{ round(list(data['Adj Close'])[-1], 2) }} </h6>
+                      <h6>{{ data[-1] }} </h6>
 
                     </div>
                   </div>
@@ -91,7 +91,7 @@
                       new ApexCharts(document.querySelector("#reportsChart"), {
                         series: [{
                           name: 'Sales',
-                          data: {{ list(data['Adj Close'])|tojson }},
+                          data: {{ data|tojson }},
                         }],
                         chart: {
                           height: 500,
@@ -122,7 +122,7 @@
                         },
                         xaxis: {
                           type: 'datetime',
-                          categories: {{ list(data['Date'])|tojson }}
+                          categories: {{ date|tojson }}
                         },
                         tooltip: {
                           x: {
@@ -158,8 +158,8 @@
                       {% for dp in range(0, len(data)) %}
                       <tr>
                         <th scope="row"><a href="#">{{ dp+1 }}</a></th>
-                        <td>{{ list(data['Date'])[dp] }}</td>
-                        <td>$ {{ list(data['Adj Close'])[dp] }}</td>
+                        <td>{{ date[dp] }}</td>
+                        <td> {{ data_us[dp] }} </td>
                       </tr>
                       {% endfor %}
                     </tbody>

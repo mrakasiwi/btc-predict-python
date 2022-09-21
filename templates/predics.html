@@ -13,12 +13,72 @@
     </div><!-- End Page Title -->
 
 
+    <!-- Pengaturan model arima dan hari yang di prediksi -->
+    <div class="body card-body accordion" id="accordionExample">
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="headingOne">
+          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+            <h5>Setting</h5>
+          </button>
+        </h2>
+        <div id="collapseOne" class="accordion-collapse collapse {%if predic ==0 %} show {%endif%}" aria-labelledby="headingOne" data-bs-parent="#accordionExample" style="">
+          <div class="accordion-body">
+            <form class="row g-4" method="post">
+              <label class="col-sm-2 col-form-label">ARIMA</label>
+              <div class="col-md">
+                <div class="input-group">
+                  <span class="input-group-text" id="inputGroupPrepend2">p</span>
+                  <input type="text" class="form-control" id="validationDefaultUsername" aria-describedby="inputGroupPrepend2" required="" name="p" value="2" dosabled>
+                </div>
+              </div>
+              <div class="col-md">
+                <div class="input-group">
+                  <span class="input-group-text" id="inputGroupPrepend2">d</span>
+                  <input type="text" class="form-control" id="validationDefaultUsername" aria-describedby="inputGroupPrepend2" required="" name="d" value="1" dosabled>
+                </div>
+              </div>
+              <div class="col-md">
+                <div class="input-group">
+                  <span class="input-group-text" id="inputGroupPrepend2">q</span>
+                  <input type="text" class="form-control" id="validationDefaultUsername" aria-describedby="inputGroupPrepend2" required="" name="q" value="2" dosabled>
+                </div>
+              </div>
+              <div class="col"></div>
+              <div></div>
+              <div class="row">
+                <div class="col-sm-2">
+                  <label for="customRange2" class="form-label">Total Prediction Day</label>
+                </div>
+                <div class="col-sm-2">
+                  <select id="inputState" name="day" class="form-select">
+                    <option>1</option>
+                    <option>2</option>
+                    <option>3</option>
+                    <option>4</option>
+                    <option>5</option>
+                    <option>6</option>
+                    <option selected>7</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-12">
+                <button class="btn btn-primary" type="submit">Calculate</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div></div>
+    {% if predic != 0 %}
     <section class="section">
       <div class="row">
 
         <div class="card">
             <div class="card-body">
-              <h5 class="card-title">Price Chart</h5>
+              <h5 class="card-title">Price Chart  | ARIMA ({{p}}, {{d}}, {{q}})</h5>
 
               <!-- Area Chart -->
               <div id="areaChart"></div>
@@ -28,7 +88,7 @@
                   const series = {
                     "monthDataSeries1": {
                       "prices": {{ predic }},
-                      "dates": {{ date|tojson }}
+                      "dates": {{ pdate|tojson }}
                     }
                   }
                   new ApexCharts(document.querySelector("#areaChart"), {
@@ -80,31 +140,32 @@
               <h5 class="card-title">Predicted Price </h5>
 
                   <table class="table">
+                    <thead>
+                      <tr>
+                        <th scope="col">No </th>
+                        <th scope="col">Date </th>
+                        <th scope="col">Price </th>
+                        <th scope="col">Detail </th>
+                      </tr>
+                    </thead>
                     <tbody>
+                      {% for dp in range(0, len(predic)) %}
                       <tr>
-                        <th scope="row">Date </th>
-                        {% for dp in range(0, len(predic)) %}
-                          <td scope="col">{{ date[dp] }}</th>
-                        {% endfor %}
-                        
+                        <th scope="row">{{ dp+1 }}</th>
+                        <td>{{ pdate[dp] }}</th>
+                        <td> {{ predic_us[dp] }}</td>
+                        <td class="{%if percents[dp] > 0 %} up-price {%elif percents[dp] < 0 %} down-price {%endif%}">{{ round(percents[dp],2) }}%  <li class="{%if percents[dp] > 0 %} bx bxs-upvote {%elif percents[dp] < 0 %} bx bxs-downvote {%endif%}"></li> </td>
                       </tr>
-                      <tr>
-                        <th scope="row">Price </th>
-                        {% for dp in range(0, len(predic)) %}
-                          <td>{{ round(predic[dp],2) }}</td>
-                        {% endfor %}
-                      </tr>
+                      {% endfor %}
                     </tbody>
                   </table>
-
-                  <h5></h5>
-              <h5 class="alert alert-info alert-dismissible fade show">MAPE : {{ mape }} </h5>
             </div>
           </div>
         </div>
       </div><!-- End Recent Sales -->
     </div>
   </section>
+  {%endif%}
 
   </main><!-- End #main -->
 
