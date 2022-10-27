@@ -24,23 +24,44 @@
         <div id="collapseOne" class="accordion-collapse collapse {%if predic ==0 %} show {%endif%}" aria-labelledby="headingOne" data-bs-parent="#accordionExample" style="">
           <div class="accordion-body">
             <form class="row g-4" method="post">
-              <label class="col-sm-2 col-form-label">ARIMA</label>
-              <div class="col-md">
-                <div class="input-group">
-                  <span class="input-group-text" id="inputGroupPrepend2">p</span>
-                  <input type="text" class="form-control" id="validationDefaultUsername" aria-describedby="inputGroupPrepend2" required="" name="p" value="2" dosabled>
+              <div class="col"></div>
+              <div></div>
+              <div class="row">
+                <label class="col-sm-2 col-form-label">Training Data</label>
+                <div class="col-md">
+                  <div class="input-group">
+                    <span class="input-group-text" id="inputGroupPrepend2">start</span>
+                    <input type="date" class="form-control" id="strdate_tr" aria-describedby="inputGroupPrepend2" name="strdate_tr" value="{{ str_date }}" min="{{ list(df['Date'])[0] }}" max="{{ list(df['Date'])[-1] }}" required>
+                  </div>
+                </div>
+                <div class="col-md">
+                  <div class="input-group">
+                    <span class="input-group-text" id="inputGroupPrepend2">end</span>
+                    <input type="date" class="form-control" id="enddate_tr" aria-describedby="inputGroupPrepend2" name="enddate_tr" value="{{ end_date }}" min="{{ list(df['Date'])[0] }}" max="{{ list(df['Date'])[-1] }}" required>
+                  </div>
                 </div>
               </div>
-              <div class="col-md">
-                <div class="input-group">
-                  <span class="input-group-text" id="inputGroupPrepend2">d</span>
-                  <input type="text" class="form-control" id="validationDefaultUsername" aria-describedby="inputGroupPrepend2" required="" name="d" value="1" dosabled>
+              <div class="col"></div>
+              <div></div>
+              <div class="row">
+                <label class="col-sm-2 col-form-label">ARIMA</label>
+                <div class="col-md">
+                  <div class="input-group">
+                    <span class="input-group-text" id="inputGroupPrepend2">p</span>
+                    <input type="text" class="form-control" id="validationDefaultUsername" aria-describedby="inputGroupPrepend2" name="p" value="2" required>
+                  </div>
                 </div>
-              </div>
-              <div class="col-md">
-                <div class="input-group">
-                  <span class="input-group-text" id="inputGroupPrepend2">q</span>
-                  <input type="text" class="form-control" id="validationDefaultUsername" aria-describedby="inputGroupPrepend2" required="" name="q" value="2" dosabled>
+                <div class="col-md">
+                  <div class="input-group">
+                    <span class="input-group-text" id="inputGroupPrepend2">d</span>
+                    <input type="text" class="form-control" id="validationDefaultUsername" aria-describedby="inputGroupPrepend2" name="d" value="1" required>
+                  </div>
+                </div>
+                <div class="col-md">
+                  <div class="input-group">
+                    <span class="input-group-text" id="inputGroupPrepend2">q</span>
+                    <input type="text" class="form-control" id="validationDefaultUsername" aria-describedby="inputGroupPrepend2" name="q" value="2" required>
+                  </div>
                 </div>
               </div>
               <div class="col"></div>
@@ -145,7 +166,7 @@
                         <th scope="col">No </th>
                         <th scope="col">Date </th>
                         <th scope="col">Price </th>
-                        <th scope="col">Detail </th>
+                        <th scope="col">Fluctuation </th>
                       </tr>
                     </thead>
                     <tbody>
@@ -154,7 +175,7 @@
                         <th scope="row">{{ dp+1 }}</th>
                         <td>{{ pdate[dp] }}</th>
                         <td> {{ predic_us[dp] }}</td>
-                        <td class="{%if percents[dp] > 0 %} up-price {%elif percents[dp] < 0 %} down-price {%endif%}">{{ round(percents[dp],2) }}%  <li class="{%if percents[dp] > 0 %} bx bxs-upvote {%elif percents[dp] < 0 %} bx bxs-downvote {%endif%}"></li> </td>
+                        <td class="{%if percents[dp] > 0 %} up-price {%elif percents[dp] < 0 %} down-price {%endif%}">{%if percents[dp] > 0 %} +{%endif%}{{ round(percents[dp],2) }}%  <li class="{%if percents[dp] > 0 %} bx bxs-upvote {%elif percents[dp] < 0 %} bx bxs-downvote {%endif%}"></li> </td>
                       </tr>
                       {% endfor %}
                     </tbody>
