@@ -12,34 +12,63 @@
     </nav>
   </div><!-- End Page Title -->
 
+    <!-- Pengaturan model arima dan hari yang di prediksi -->
+    <div class="body card-body accordion" id="accordionExample">
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="headingOne">
+          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+            <h5>Setting</h5>
+          </button>
+        </h2>
+        <div id="collapseOne" class="accordion-collapse collapse {%if arima == 0 %} show {%endif%}" aria-labelledby="headingOne" data-bs-parent="#accordionExample" style="">
+          <div class="accordion-body">
+            <form class="row g-4" action="" method="post">
+              <label class="col-sm-2 col-form-label">Training Data</label>
+              <div class="col-md">
+                <div class="input-group">
+                  <span class="input-group-text" id="inputGroupPrepend2">start</span>
+                  <input type="date" class="form-control" id="strdate_tr" aria-describedby="inputGroupPrepend2" name="strdate_tr" value="{{ str_date }}" min="{{ list(df['Date'])[0] }}" max="{{ list(df['Date'])[-1] }}" required>
+                </div>
+              </div>
+              <div class="col-md">
+                <div class="input-group">
+                  <span class="input-group-text" id="inputGroupPrepend2">end</span>
+                  <input type="date" class="form-control" id="enddate_tr" aria-describedby="inputGroupPrepend2" name="enddate_tr" value="{{ end_date }}" min="{{ list(df['Date'])[0] }}" max="{{ list(df['Date'])[-1] }}" required>
+                </div>
+              </div>
+              <input name="day" value="0" hidden>
+              <div class="col-md">
+                <button class="btn btn-primary" type="submit">Get ARIMA Model</button>
+              </div>
+              <div></div>
+              <div class="col-12">
+                
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% if arima != 0 %}
     <section class="section">
       <div class="row">
         
           <div class="col-lg-8">
             <div class="card">
               <div class="card-body">
-               <h5 class="card-title">Data Division</h5>
+               <h5 class="card-title">ARIMA Model Results</h5>
           
-                <!-- Pie Chart -->
-                <div id="pieChart"></div>
-          
-                  <script>
-                    document.addEventListener("DOMContentLoaded", () => {
-                    new ApexCharts(document.querySelector("#pieChart"), {
-                    series: [{{ len(train2) }}, {{ len(testing) }}],
-                    chart: {
-                      height: 350,
-                      type: 'pie',
-                      toolbar: {
-                        show: true
-                      }
-                    },
-                    labels: ['Training Data', 'Testing Data']
-                      }).render();
-                    });
-                  </script>
-                  <!-- End Pie Chart -->
-
+                <!-- Result ARIMA Model -->
+                {{ table1 | safe }}
+                <div></div>
+                <div></div>
+                {{ table2 | safe }}
+                <div></div>
+                <div></div>
+                {{ table3 | safe }}
+                  <!-- End Result ARIMA Model -->
+                <div></div>
               </div>
             </div>
           </div>
@@ -47,18 +76,38 @@
             <!-- Right side columns -->
             <div class="col-lg-4">
 
+              <!-- ARIMA Model Card -->
+              <div class="card info-card sales-card">
+
+                <div class="card-body">
+                  <h5 class="card-title">Best Fit ARIMA Model <span></span> </h5>
+
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="bx bx-check-square"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6>{{ arima_model }}</h6>
+
+                    </div>
+                  </div>
+                </div>
+
+              </div><!-- End ARIMA Model Card -->
+
+
               <!-- Training Card -->
               <div class="card info-card sales-card">
 
                 <div class="card-body">
-                  <h5 class="card-title">Interval Training Data <span></span> </h5>
+                  <h5 class="card-title">Interval Training Data <span>| {{ len(date) }}</span> </h5>
 
                   <div class="d-flex align-items-center">
                     <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
                       <i class="bi bi-calendar"></i>
                     </div>
                     <div class="ps-3">
-                      <h6>{{ list(data['Date'])[0] }} - {{ list(data['Date'])[len(train2)] }}</h6>
+                      <h6>{{ date[0] }} - {{ date[-1] }}</h6>
 
                     </div>
                   </div>
@@ -66,25 +115,60 @@
 
               </div><!-- End Training Card -->
 
+              {% if mape == 0 :%} 
+                {% if count_ts > 1 :%} 
+                  <div class="card">
+                    <div class="card-body">
+                      <form class="row g-4" method="post">
+                        <h5 class="card-title">Testing Data</h5>
+                        <div class="row">
+                          <div class="col-sm-4">
+                            <select id="inputState" name="day" class="form-select">
+                              {% for dp in range(1, count_ts) %}
+                                <option>{{ dp }}</option>
+                              {% endfor %}
+                            </select>
+                          </div>
+                        </div>
+                        <input id="strdate_tr" name="strdate_tr" value="{{ str_date }}" hidden>
+                        <input id="enddate_tr" name="enddate_tr" value="{{ end_date }}" hidden>
+                        <div class="col-12">
+                          <button class="btn btn-primary" type="submit" align="Right">Calculate MAPE</button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                {% endif %}
+
+              {% else : %}
               <!-- Testing Card -->
-              <div class="col-xl">
+                <div class="col-xl">
                   <div class="card info-card sales-card">
         
                     <div class="card-body">
-                      <h5 class="card-title">Interval Testing Data </h5>
+                      <h5 class="card-title">Interval Testing Data <span>| {{ len(ts_date) }} </span></h5>
       
                       <div class="d-flex align-items-center">
                         <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
                           <i class="bi bi-calendar"></i>
                         </div>
                         <div class="ps-3">
-                          <h6>{{ date[0] }} - {{ date[-1] }} </h6>
+                          <h6>{{ ts_date[0] }} - {{ ts_date[-1] }} </h6>
                         </div>
                       </div>
                     </div>
-  
+
                   </div>
-                </div><!-- End Testing Card -->
+                </div>
+                <!-- End Testing Card -->
+
+                <!-- MAPE Card -->
+                <div class="col-x1">
+                  <h5 class="alert alert-info alert-dismissible fade show">MAPE : {{ mape }} </h5>
+                </div>
+                <!-- End MAPE Card -->
+
+              
 
             </div><!-- End Right side columns -->
 
@@ -105,11 +189,11 @@
           document.addEventListener("DOMContentLoaded", () => {
             new ApexCharts(document.querySelector("#reportsChart"), {
               series: [{
-                name: 'Training',
+                name: 'Prediction',
                 data: {{ prediction|tojson }},
               },
               {
-                name: 'Testing',
+                name: 'Actual',
                 data: {{ testing|tojson }},
               }],
               chart: {
@@ -141,7 +225,7 @@
               },
               xaxis: {
                 type: 'datetime',
-                categories: {{ date|tojson }}
+                categories: {{ ts_date|tojson }}
               },
               tooltip: {
                 x: {
@@ -156,15 +240,8 @@
       </div>
   
     </div> <!-- End Reports -->
-
-    <div class="card body">
-      <h5 class="alert alert-info alert-dismissible fade show">MAPE : {{ mape }} </h5>
-    </div>
-
-    <div class="card body" >
-      {{ model }}
-    </div>
-
+    {%endif%}
+    {% endif %}
 
   </main><!-- End #main -->
 
